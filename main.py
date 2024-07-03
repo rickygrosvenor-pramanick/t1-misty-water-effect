@@ -23,12 +23,16 @@ def read_im(filename, colour):
     Args:
         filename (str): path to image
         colour (int): imread flag for differentiating greyscale vs colour
+        cv::IMREAD_GRAYSCALE = 0,
+        cv::IMREAD_COLOR = 1, 
 
     Returns:
         (np.ndarray): image of shape
     """
     # TODO: replace with your implementation
-    return None
+
+    img = cv2.imread(filename, colour)
+    return img
 
 
 def write_im(filename, image):
@@ -39,8 +43,21 @@ def write_im(filename, image):
         image (np.ndarray): image to be written
     """
     # TODO: replace with your implementation
-    pass
+    cv2.imwrite(filename, image)
 
+"""
+The general steps for creating a coloured misty water effect image are as follows:
+
+    1. Read in all images in burst. We need a lot of images (20+) to create a smooth effect. 
+    We assume that each image in burst has the same number of pixels and dimensions.
+
+    2. Stack all images into a single array such that the stack has dimensions (K, N, M, 3). 
+    Take a look at these NumPy docs for hints on doing the stacking. Here, K is the number of images 
+    in our burst, N is the number of rows of pixels in each image, M is the number of colours of pixels. 
+    3 represents our three colour channels RGB.
+
+    3. Average over dimension 0 (K) to get the misty image of size (N,M,3). The result will be the misty effect image.
+"""
 def read_burst(dir, filetype, colour):
     """Read in all of the .jpg or .png images in a directory
 
@@ -53,7 +70,13 @@ def read_burst(dir, filetype, colour):
         (np.ndarray): image of shape (K, N, M, ...) where K is the number of images in dir
     """
     # TODO: replace with your implementation
-    return None
+    img_list = []
+    for img in glob.iglob(f'{dir}/*'):
+        if img.endswith(filetype):
+            read_img = read_im(img, colour)
+            img_list.append(read_img)
+    
+    return np.array(img_list)
 
 def calculate_misty(image_stack):
     """Calculates the misty effect image
@@ -63,7 +86,7 @@ def calculate_misty(image_stack):
 
     """
     # TODO: replace with your implementation
-    return None
+    return np.mean(image_stack, axis=0)
 
 if __name__ == '__main__':
 
